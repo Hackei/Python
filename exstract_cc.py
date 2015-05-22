@@ -2,7 +2,6 @@
 
 import commands
 
-# For list of IP addresses
 file = open('log.txt','r')
 ips = []
 
@@ -20,13 +19,16 @@ for ip in ips:
     des = ''
     command = 'whois '+ip
     res = commands.getstatusoutput(command)[1]
-
     w = res.split('\n')
 
     for i in xrange(len(w)):
         
         if 'country:' in w[i] and 'remarks' not in w[i]:
-            cc = str(w[i]).split('country:        ')[1]
+            if 'country:     ' in w[i]:
+                cc = str(w[i]).split('country:     ')[1]
+
+            else:
+                cc = str(w[i]).split('country:        ')[1]
         
         if 'descr:' in w[i]:
             des = str(w[i]).split('descr:        ')[1]
@@ -37,16 +39,15 @@ for ip in ips:
         
             if 'OrgName:' in w[i]:
                 des = str(w[i]).split('OrgName:        ')[1]
-    if cc == 'JP':
+
+    if 'JP' in cc:
         jp = jp+1
-    elif cc =='US':
+    elif 'US' in cc:
         us = us+1
-    elif cc=='RU':
+    elif 'RU' in cc:
         ru = ru+1
     else:
         new_cc.append(cc)
         print 'NEW: '+ ip+' '+cc+' '+ des
 
 print 'Total is JP: %d' % jp,' US: %d ' % us,' RU: %d'%ru, 'NEW: %s'%new_cc
-
-
